@@ -9,11 +9,16 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from dotenv import load_dotenv
+import os
 
+
+ENV = load_dotenv()
 CWD = Path(__file__).resolve().parent
 
 geckodriver_path = CWD / ".utils" / "geckodriver.exe"
 fake = Faker("en_PH")
+
 
 class Person:
     def __init__(self, name):
@@ -23,17 +28,23 @@ class Person:
 
     def generate_email(self):
         print("generating random email")
-        domain = random.choice(["gmail.com", "yahoo.com", "gmail.com.ph", "yahoo.com.ph", "plmun.edu.ph"])
+        domain = random.choice(
+            ["gmail.com", "yahoo.com", "gmail.com.ph", "yahoo.com.ph", "plmun.edu.ph"]
+        )
         name = [self.firstname, self.lastname]
         random.shuffle(name)
         joining_str = random.choice(["", ".", "_"])
 
         return f"{name[0]}{joining_str}{name[1]}@{domain}"
 
+
 def click_next(driver: webdriver.Firefox):
     print("clicking next")
-    next = driver.find_element(By.XPATH, ".//span[text()='Susunod']/parent::span/parent::div")
+    next = driver.find_element(
+        By.XPATH, ".//span[text()='Susunod']/parent::span/parent::div"
+    )
     next.click()
+
 
 def multiple_choice(driver: webdriver.Firefox, class_name: str):
     print("handling multiple choices")
@@ -44,6 +55,7 @@ def multiple_choice(driver: webdriver.Firefox, class_name: str):
         element = random.choice(choices)
         element.click()
 
+
 def check_box(driver: webdriver.Firefox, parent_class: str, child_class: str):
     print("handling checkboxes")
     learnPLMun = driver.find_elements(By.XPATH, f".//div[@class='{parent_class}']")[-1]
@@ -53,10 +65,14 @@ def check_box(driver: webdriver.Firefox, parent_class: str, child_class: str):
     for i in range(random.randrange(1, len(elements))):
         elements[i].click()
 
+
 def click_submit(driver: webdriver.Firefox):
     print("clicking submit")
-    submit = driver.find_element(By.XPATH, ".//span[text()='Submit']/parent::span/parent::div")
+    submit = driver.find_element(
+        By.XPATH, ".//span[text()='Submit']/parent::span/parent::div"
+    )
     submit.click()
+
 
 def populate_form(driver: webdriver.Firefox):
     print("populating forms")
@@ -68,7 +84,9 @@ def populate_form(driver: webdriver.Firefox):
     consent = driver.find_element(By.XPATH, ".//div[@id='i11']")
     consent.click()
 
-    full_name = driver.find_element(By.XPATH ,".//div[@class='Xb9hP']/input[@type='text']")
+    full_name = driver.find_element(
+        By.XPATH, ".//div[@class='Xb9hP']/input[@type='text']"
+    )
     full_name.send_keys(robot.name)
 
     multiple_choice(driver, "oyXaNc")
@@ -77,31 +95,26 @@ def populate_form(driver: webdriver.Firefox):
     time.sleep(3)
     check_box(driver, "geS5n AFppSc", "uVccjd aiSeRd FXLARc wGQFbe BJHAP oLlshd")
     time.sleep(1)
-    multiple_choice(driver, 'geS5n')
+    multiple_choice(driver, "geS5n")
     click_next(driver)
     time.sleep(3)
-    multiple_choice(driver, 'geS5n AFppSc')
+    multiple_choice(driver, "geS5n AFppSc")
     click_next(driver)
     time.sleep(3)
-    multiple_choice(driver, 'geS5n AFppSc')
-    multiple_choice(driver, 'geS5n')
+    multiple_choice(driver, "geS5n AFppSc")
+    multiple_choice(driver, "geS5n")
     click_next(driver)
     time.sleep(2)
     click_submit(driver)
 
 
-
-# a = Person()
-# email = a.generate_email()
-# print(email)
-
 if __name__ == "__main__":
     for i in range(50):
         try:
             options = Options()
-            # options.add_argument("--headless")
+            options.add_argument("--headless")
             browser = webdriver.Firefox(options=options)
-            browser.get("https://forms.gle/cKf3t5umBnT3ZZvC8")
+            browser.get(os.getenv("google_form"))
             populate_form(browser)
             browser.close()
         except Exception as e:
