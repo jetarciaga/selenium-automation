@@ -174,5 +174,5 @@ cython_debug/
 .pypirc
 
 
-# user-ignore
-sample.py
+# # user-ignore
+# sample.py
